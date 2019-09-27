@@ -11,11 +11,20 @@ export default {
                     title: "分类",
                     columns: [
                         { prop: "_id", label: "ID" },
-                        { prop: "parent", label: "类名" },
+                        {
+                            prop: "parent",
+                            label: "类名",
+                            handleCon: rowData => {
+                                return rowData.parent
+                                    ? rowData.parent.name
+                                    : "";
+                            }
+                        },
                         { prop: "name", label: "子类" }
                     ]
                 },
-                api_model: "categories"
+                api_model: "categories",
+                populate_name: "parent"
             }
         };
     }

@@ -39,8 +39,8 @@ export default {
     data() {
         return {
             ruleForm: {
-                name: "",
-                parent: ""
+                name: null,
+                parent: null
             },
             rules: {
                 name: [

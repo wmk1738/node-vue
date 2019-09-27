@@ -1,6 +1,9 @@
 module.exports = (app) => {
-    const express = require('express');
-    const router = express.Router({ mergeParams: true });
+    const express = require('express'),
+        router = express.Router({ mergeParams: true }),
+        jwt = require('jsonwebtoken'),
+        User = require('./../../model/User'),
+        assert = require('http-assert');
 
     router.post('/create', async (req, res) => {
         let model = await req.model.create(req.body)
@@ -21,17 +24,13 @@ module.exports = (app) => {
             msg: 'delete success',
         });
     })
-    router.get('/', async (req, res) => {
-        let options = {}, items = [];
-        if (req.params.modelname === 'categories') {
-            items = await req.model.find()
-                .populate('parent').then(res => res.map(ele =>
-                    ele.parent ? { name: ele.name, _id: ele._id, parent: ele.parent.name } : ele
-                ))
+    router.get('/:populate_name?', async (req, res) => {
+        let options = {}, items = [], p_name = req.params.populate_name;
+        if (p_name) {
+            items = await req.model.find().populate(p_name)
         } else {
-            items = await req.model.find();
+            items = await await req.model.find();
         }
-
         res.send(items);
     })
     router.get('/options', async (req, res) => {
@@ -42,10 +41,27 @@ module.exports = (app) => {
         let items = await req.model.findById(req.params.id);
         res.send(items);
     })
+
     app.use('/admin/api/reset/:modelname', async (req, res, next) => {
+        const token = String(req.headers.authtoken || '').split(' ').pop();
+        assert(token, 412, 'token不存在');
+        const { id } = jwt.verify(token, app.get('secret'));
+        assert(id, 412, '用户不存在');
+        const userObj = await User.findById(id);
+        assert(userObj, 412, 'token无效');
+        req.userName = userObj.user;
+        next();
+    }, async (req, res, next) => {
         const name = require('inflection').classify(req.params.modelname);//将api地址中的modelname参数转成首个字母为大写单词
         req.model = require(`./../../model/${name}`);
         next();
     }, router);
+
+    app.use((err, req, res, next) => {
+        console.log('err', err)
+        res.status(err.statusCode || 500).send({
+            message: err.message || ''
+        })
+    });
 
 }

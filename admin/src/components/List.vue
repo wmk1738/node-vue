@@ -3,24 +3,24 @@
         <h1>{{table_config.title}}</h1>
         <el-table :data="tableData">
             <el-table-column v-for="item in table_config.columns"
-                             :key="item.prop"
-                             :label="item.label">
+                :key="item.prop"
+                :label="item.label">
                 <template slot-scope="scope">
                     <img v-if="!!item.showSlot"
-                         :src="scope.row[item.prop]"
-                         alt="">
-                    <span v-else>{{scope.row[item.prop]}}</span>
+                        :src="scope.row[item.prop]"
+                        alt="">
+                    <span v-else>{{item.handleCon?item.handleCon(scope.row):scope.row[item.prop]}}</span>
                 </template>
             </el-table-column>
             <el-table-column fixed="right"
-                             label="操作">
+                label="操作">
                 <template slot-scope="scope">
                     <el-button type="text"
-                               @click="edit(scope.row)"
-                               size="small">编辑</el-button>
+                        @click="edit(scope.row)"
+                        size="small">编辑</el-button>
                     <el-button type="text"
-                               @click="remove(scope.row)"
-                               size="small">删除</el-button>
+                        @click="remove(scope.row)"
+                        size="small">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -30,15 +30,14 @@
 <script>
 export default {
     name: "List",
-    props: ["table_config", "api_model"],
-    data() {
-        return {
-            tableData: []
-        };
-    },
+    props: ["table_config", "api_model", "populate_name"],
+    data: () => ({ tableData: [] }),
     methods: {
         async fetchList() {
-            let items = await this.$http.get(`/reset/${this.api_model}`);
+            let url = `/reset/${this.api_model}${
+                    this.populate_name ? "/" + this.populate_name : ""
+                }`,
+                items = await this.$http.get(url);
             this.tableData = items.data;
         },
         edit(row) {

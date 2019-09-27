@@ -1,7 +1,7 @@
 <template>
     <el-container style="height: 100vh">
         <el-aside width="200px"
-                  style="background-color: rgb(238, 241, 246)">
+            style="background-color: rgb(238, 241, 246)">
             <Menu :menu_config="menu_config"></Menu>
         </el-aside>
         <el-container>
@@ -57,6 +57,58 @@ export default {
                                 {
                                     title: "新增物品",
                                     router: "/goods/create"
+                                }
+                            ]
+                        },
+                        {
+                            title: "英雄",
+                            items: [
+                                {
+                                    title: "英雄列表",
+                                    router: "/heroes/list"
+                                },
+                                {
+                                    title: "新增英雄",
+                                    router: "/heroes/create"
+                                }
+                            ]
+                        },
+                        {
+                            title: "文章",
+                            items: [
+                                {
+                                    title: "文章列表",
+                                    router: "/articles/list"
+                                },
+                                {
+                                    title: "新增文章",
+                                    router: "/articles/create"
+                                }
+                            ]
+                        },
+                        {
+                            title: "广告",
+                            items: [
+                                {
+                                    title: "广告列表",
+                                    router: "/ads/list"
+                                },
+                                {
+                                    title: "新增广告",
+                                    router: "/ads/create"
+                                }
+                            ]
+                        },
+                        {
+                            title: "用户",
+                            items: [
+                                {
+                                    title: "用户列表",
+                                    router: "/users/list"
+                                },
+                                {
+                                    title: "新增用户",
+                                    router: "/users/create"
                                 }
                             ]
                         }
