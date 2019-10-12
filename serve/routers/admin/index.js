@@ -45,7 +45,10 @@ module.exports = (app) => {
     app.use('/admin/api/reset/:modelname', async (req, res, next) => {
         const token = String(req.headers.authtoken || '').split(' ').pop();
         assert(token, 412, 'token不存在');
-        const { id } = jwt.verify(token, app.get('secret'));
+        const { id } = jwt.verify(token, app.get('secret'), (err, data) => {
+            err && assert(!err, 412, err.message);
+            return data;
+        });
         assert(id, 412, '用户不存在');
         const userObj = await User.findById(id);
         assert(userObj, 412, 'token无效');

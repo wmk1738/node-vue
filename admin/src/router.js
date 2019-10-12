@@ -15,9 +15,8 @@ import UserList from './views/UserList.vue';
 import UserCreate from './views/UserCreate.vue';
 import Login from './views/Login.vue';
 
-Vue.use(Router)
-
-export default new Router({
+Vue.use(Router);
+const router = new Router({
     routes: [
         {
             path: '/',
@@ -51,6 +50,19 @@ export default new Router({
 
             ]
         },
-        { path: '/login', name: 'login', component: Login }
+        { path: '/login', name: 'login', component: Login, meta: { noauth: true } }
     ]
+});
+
+router.beforeEach((to, from, next) => {
+    const token = localStorage.getItem('token');
+    if (!token && !to.meta.noauth) {
+        from.path !== '/login' && router.push('/login');
+        next(false);
+        return;
+    } else {
+        next();
+    }
 })
+
+export default router;
